@@ -14,6 +14,8 @@ class NewExpenseViewController: UIViewController {
     @IBOutlet weak var amountTextField: UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
     
+    var category: Category?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -33,6 +35,21 @@ class NewExpenseViewController: UIViewController {
     }
     
     @IBAction func saveExpense(_ sender: Any) {
+        let name = nameTextField.text
+        let amountText = amountTextField.text ?? ""
+        let amount = Double(amountText) ?? 0.0
+        let date = datePicker.date
+        
+        if let expense = Expense(name: name, amount: amount, date: date) {
+            category?.addToRawExpenses(expense)
+            
+            do {
+                try expense.managedObjectContext?.save()
+                self.navigationController?.popViewController(animated: true)
+            } catch {
+                print("Expense could not be created")
+            }
+        }
         
     }
 }
